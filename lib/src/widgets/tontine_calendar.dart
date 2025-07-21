@@ -20,11 +20,23 @@ class TontineCalendar extends StatefulWidget {
   /// Callback when a validated day is tapped (for showing details)
   final void Function(TontineDay day)? onValidatedDayTapped;
 
+  /// Callback when the calendar page changes
+  final void Function(int pageIndex)? onPageChanged;
+
+  /// Callback when the calendar initialization is complete
+  final void Function()? onInitializationComplete;
+
+  /// Callback when the mode changes (simple/multiple)
+  final void Function(bool isSimpleMode)? onModeChanged;
+
   /// Whether to enable simple mode (only next day can be selected)
   final bool simpleMode;
 
   /// Whether to show mode selection tabs
   final bool showModeSelection;
+
+  /// Optional controller for programmatic access
+  final TontineCalendarController? controller;
 
   const TontineCalendar({
     super.key,
@@ -32,12 +44,66 @@ class TontineCalendar extends StatefulWidget {
     this.style = const TontineCalendarStyle(),
     this.onDaySelected,
     this.onValidatedDayTapped,
+    this.onPageChanged,
+    this.onInitializationComplete,
+    this.onModeChanged,
     this.simpleMode = false,
     this.showModeSelection = true,
+    this.controller,
   });
 
   @override
   State<TontineCalendar> createState() => _TontineCalendarState();
+}
+
+/// Controller class to provide programmatic access to TontineCalendar
+class TontineCalendarController {
+  _TontineCalendarState? _state;
+
+  void _attach(_TontineCalendarState state) {
+    _state = state;
+  }
+
+  void _detach() {
+    _state = null;
+  }
+
+  /// Navigate to a specific month (1-based index)
+  void navigateToMonth(int month) {
+    _state?._navigateToMonth(month);
+  }
+
+  /// Navigate to the next month
+  void navigateToNextMonth() {
+    _state?._navigateToNextMonth();
+  }
+
+  /// Navigate to the previous month
+  void navigateToPreviousMonth() {
+    _state?._navigateToPreviousMonth();
+  }
+
+  /// Get the current month index (0-based)
+  int? get currentMonthIndex => _state?._currentMonthIndex;
+
+  /// Get the current mode (true for simple, false for multiple)
+  bool? get isSimpleMode => _state?._isSimpleMode;
+
+  /// Set the mode programmatically
+  void setMode(bool isSimpleMode) {
+    _state?._setMode(isSimpleMode);
+  }
+
+  /// Get the next day to select in simple mode
+  int? get nextDayToSelect => _state?._nextDayToSelect;
+
+  /// Get the currently selected days
+  List<int>? get selectedDays => _state?._selectedDays;
+
+  /// Clear the current selection
+  void clearSelection() {
+    _state?._clearSelection();
+  }
 }
 
 class _TontineCalendarState extends State<TontineCalendar> {
@@ -53,10 +119,20 @@ class _TontineCalendarState extends State<TontineCalendar> {
     super.initState();
     _isSimpleMode = widget.simpleMode;
     _initializeCalendar();
+
+    // Attach controller if provided
+    widget.controller?._attach(this);
+
+    // Notify initialization complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onInitializationComplete?.call();
+    });
   }
 
   @override
   void dispose() {
+    // Detach controller
+    widget.controller?._detach();
     _pageController.dispose();
     super.dispose();
   }
@@ -214,6 +290,9 @@ class _TontineCalendarState extends State<TontineCalendar> {
       _nextDayToSelect = _calculateNextDayToSelect();
       _selectedDays.clear();
     });
+
+    // Notifier le parent du changement de page
+    widget.onPageChanged?.call(pageIndex);
   }
 
   void _navigateToPreviousMonth() {
@@ -247,6 +326,37 @@ class _TontineCalendarState extends State<TontineCalendar> {
     }
   }
 
+  /// Navigate to a specific month (1-based index)
+  void _navigateToMonth(int month) {
+    final monthIndex = month - 1; // Convert to 0-based index
+    if (monthIndex >= 0 && monthIndex < widget.config.monthCount) {
+      _pageController.animateToPage(
+        monthIndex,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  /// Set the mode programmatically
+  void _setMode(bool isSimpleMode) {
+    if (_isSimpleMode != isSimpleMode) {
+      setState(() {
+        _isSimpleMode = isSimpleMode;
+        _selectedDays.clear();
+        _nextDayToSelect = _calculateNextDayToSelect();
+      });
+      widget.onModeChanged?.call(isSimpleMode);
+    }
+  }
+
+  /// Clear the current selection
+  void _clearSelection() {
+    setState(() {
+      _selectedDays.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -278,13 +388,13 @@ class _TontineCalendarState extends State<TontineCalendar> {
             isSelected: _isSimpleMode,
             label: 'SIMPLE',
             icon: Icons.loyalty,
-            onTap: () => setState(() => _isSimpleMode = true),
+            onTap: () => _setMode(true),
           ),
           _buildModeTab(
             isSelected: !_isSimpleMode,
             label: 'MULTIPLE',
             icon: Icons.spoke,
-            onTap: () => setState(() => _isSimpleMode = false),
+            onTap: () => _setMode(false),
           ),
         ],
       ),

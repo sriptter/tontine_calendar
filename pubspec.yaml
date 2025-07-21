@@ -1,6 +1,6 @@
 name: tontine_calendar
 description: A customizable Flutter calendar widget designed for tontine applications with paginated months, configurable days, and contribution tracking.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/sriptter/tontine_calendar
 repository: https://github.com/sriptter/tontine_calendar
 issue_tracker: https://github.com/sriptter/tontine_calendar/issues

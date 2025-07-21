@@ -1,3 +1,24 @@
+## 1.1.0
+
+### Enhanced Controller and Callback Support
+
+* **NEW**: Added `TontineCalendarController` for programmatic access
+  - Navigate to specific months programmatically
+  - Get current calendar state (month, mode, selected days)
+  - Set mode programmatically (simple/multiple)
+  - Clear current selection
+
+* **NEW**: Added `onInitializationComplete` callback
+  - Notifies when calendar initialization is complete
+  - Useful for state synchronization in parent widgets
+
+* **NEW**: Added `onModeChanged` callback
+  - Triggered when user switches between simple/multiple modes
+  - Provides current mode state to parent widgets
+
+* **IMPROVED**: Better state synchronization and callback support
+* **IMPROVED**: Enhanced controller pattern for external state management
+
 ## 1.0.0
 
 ### Initial Release
