@@ -1,3 +1,90 @@
+## 1.2.0
+
+### Major Theme and Style Revision
+
+* **NEW**: Material 3 themes with modern design
+  - `Material3Themes.material3Light()` - Light theme with Material 3 colors
+  - `Material3Themes.material3Dark()` - Dark theme with Material 3 colors
+  - `Material3Themes.material3Adaptive()` - Automatically adapts to system theme
+  - `Material3Themes.material3Premium()` - Premium theme with enhanced gradients
+  - `Material3Themes.material3FromSeed()` - Create theme from seed color
+
+* **NEW**: Enhanced styling capabilities
+  - Gradient support for day containers (regularDayGradient, validatedDayGradient, selectedDayGradient)
+  - Box shadows for depth and premium look (dayBoxShadow, validatedDayBoxShadow, selectedDayBoxShadow)
+  - Elevation support with configurable elevation values
+  - Configurable animation durations and curves for transitions and selections
+
+* **NEW**: Localization support
+  - Added `locale` parameter to `TontineCalendarConfig`
+  - Support for multiple languages via `intl` package
+  - Factory methods: `withSpanishNames()`, `withLocale()`
+  - Automatic month name localization based on locale
+
+* **NEW**: Export utilities
+  - `TontineExportUtils` class for data export
+  - Export to JSON format
+  - Export to CSV format (simple implementation)
+  - Generate summary and detailed text reports
+
+* **IMPROVED**: Animation system
+  - Configurable transition durations and curves
+  - Smooth page transitions between months
+  - Animated day selection with customizable curves
+  - Better visual feedback
+
+* **IMPROVED**: Responsive design
+  - Better support for different screen sizes
+  - Enhanced visual hierarchy with gradients and shadows
+  - Premium look and feel
+
+### Dependencies
+
+* Added `intl: ^0.19.0` for localization support
+* Optional dependencies documented for extended features:
+  - `shared_preferences` for state persistence
+  - `pdf` for PDF export
+  - `csv` for advanced CSV export
+  - `flutter_local_notifications` for payment reminders
+  - `fl_chart` for statistics charts
+
+### Breaking Changes
+
+None - All changes are backward compatible. Existing code will continue to work.
+
+### Migration Guide
+
+To use the new Material 3 themes:
+
+```dart
+// Before
+TontineCalendar(
+  config: config,
+  style: TontineCalendarStyle.lightTheme(),
+)
+
+// After (optional - old themes still work)
+TontineCalendar(
+  config: config,
+  style: Material3Themes.material3Light(),
+)
+```
+
+To use localization:
+
+```dart
+// New way with locale
+final config = TontineCalendarConfig.withLocale(
+  locale: 'fr',
+  monthCount: 6,
+);
+
+// Or with specific language
+final config = TontineCalendarConfig.withSpanishNames(
+  monthCount: 6,
+);
+```
+
 ## 1.1.0
 
 ### Enhanced Controller and Callback Support

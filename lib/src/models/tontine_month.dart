@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'tontine_day.dart';
 
 /// Represents a month in the tontine calendar
@@ -34,6 +35,45 @@ class TontineMonth {
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
 
+  /// Gets month names for Spanish locale
+  static const List<String> spanishMonthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+
+  /// Gets month names using Intl package based on locale
+  static List<String> getMonthNamesForLocale(String locale) {
+    try {
+      final dateFormat = DateFormat('MMMM', locale);
+      return List.generate(12, (index) {
+        final date = DateTime(2024, index + 1, 1);
+        return dateFormat.format(date);
+      });
+    } catch (e) {
+      // Fallback to English if locale is not supported
+      return defaultMonthNames;
+    }
+  }
+
+  /// Gets month names for a specific locale code
+  static List<String> getMonthNames(String localeCode) {
+    switch (localeCode.toLowerCase()) {
+      case 'fr':
+      case 'fr_FR':
+      case 'fr_CA':
+        return frenchMonthNames;
+      case 'es':
+      case 'es_ES':
+      case 'es_MX':
+        return spanishMonthNames;
+      case 'en':
+      case 'en_US':
+      case 'en_GB':
+      default:
+        return defaultMonthNames;
+    }
+  }
+
   /// Creates a TontineMonth with the specified parameters
   factory TontineMonth.create({
     required int month,
@@ -41,8 +81,16 @@ class TontineMonth {
     String? customName,
     List<String>? monthNames,
     List<TontineDay>? validatedDays,
+    String? locale,
   }) {
-    final names = monthNames ?? defaultMonthNames;
+    List<String> names;
+    if (monthNames != null) {
+      names = monthNames;
+    } else if (locale != null) {
+      names = getMonthNamesForLocale(locale);
+    } else {
+      names = defaultMonthNames;
+    }
     final name = customName ?? names[month - 1];
     
     final days = List.generate(totalDays, (index) {

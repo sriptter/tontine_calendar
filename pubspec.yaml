@@ -1,6 +1,6 @@
 name: tontine_calendar
 description: A customizable Flutter calendar widget designed for tontine applications with paginated months, configurable days, and contribution tracking.
-version: 1.1.0
+version: 1.2.0
 homepage: https://github.com/sriptter/tontine_calendar
 repository: https://github.com/sriptter/tontine_calendar
 issue_tracker: https://github.com/sriptter/tontine_calendar/issues
@@ -13,11 +13,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
+# Optional dependencies for extended features
+# Uncomment and add to dependencies if you need these features:
+# shared_preferences: ^2.2.0  # For state persistence
+# pdf: ^3.10.0  # For PDF export
+# csv: ^5.0.0  # For CSV export
+# flutter_local_notifications: ^16.0.0  # For payment reminders
+# fl_chart: ^0.65.0  # For statistics charts
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

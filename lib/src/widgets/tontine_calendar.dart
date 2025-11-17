@@ -146,6 +146,7 @@ class _TontineCalendarState extends State<TontineCalendar> {
         totalDays: widget.config.daysPerMonth,
         monthNames: widget.config.effectiveMonthNames,
         validatedDays: widget.config.getValidatedDaysForMonth(monthNumber),
+        locale: widget.config.locale,
       );
     });
 
@@ -298,8 +299,8 @@ class _TontineCalendarState extends State<TontineCalendar> {
   void _navigateToPreviousMonth() {
     if (_currentMonthIndex > 0) {
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
+        duration: widget.style.transitionDuration,
+        curve: widget.style.transitionCurve,
       );
     }
   }
@@ -311,16 +312,16 @@ class _TontineCalendarState extends State<TontineCalendar> {
       if (currentMonth.isCompleted &&
           _currentMonthIndex < widget.config.monthCount - 1) {
         _pageController.nextPage(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
+          duration: widget.style.transitionDuration,
+          curve: widget.style.transitionCurve,
         );
       }
     } else {
       // Allow navigation to next month if it exists
       if (_currentMonthIndex < widget.config.monthCount - 1) {
         _pageController.nextPage(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
+          duration: widget.style.transitionDuration,
+          curve: widget.style.transitionCurve,
         );
       }
     }
@@ -332,8 +333,8 @@ class _TontineCalendarState extends State<TontineCalendar> {
     if (monthIndex >= 0 && monthIndex < widget.config.monthCount) {
       _pageController.animateToPage(
         monthIndex,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: widget.style.transitionDuration,
+        curve: widget.style.transitionCurve,
       );
     }
   }
@@ -556,18 +557,39 @@ class _TontineCalendarState extends State<TontineCalendar> {
     Color backgroundColor;
     Color textColor;
     Widget content;
+    Gradient? gradient;
+    List<BoxShadow>? boxShadow;
+    double elevation = 0.0;
 
     if (isValidated) {
-      backgroundColor = widget.style.validatedDayColor.withValues(alpha: 0.9);
+      backgroundColor = widget.style.validatedDayColor;
       textColor = widget.style.validatedDayTextColor;
+      gradient = widget.style.validatedDayGradient;
+      boxShadow = widget.style.validatedDayBoxShadow;
+      elevation = widget.style.validatedDayElevation;
       content = Icon(
         widget.style.effectiveValidatedDayIcon,
         color: textColor,
         size: widget.style.validatedDayIconSize,
       );
+    } else if (isSelected) {
+      backgroundColor = widget.style.selectedDayColor;
+      textColor = widget.style.selectedDayTextColor;
+      gradient = widget.style.selectedDayGradient;
+      boxShadow = widget.style.selectedDayBoxShadow;
+      elevation = widget.style.selectedDayElevation;
+      content = widget.config.showDayNumbers
+          ? Text(
+              day.day.toString(),
+              style: widget.style.dayTextStyle.copyWith(color: textColor),
+            )
+          : const SizedBox.shrink();
     } else {
-      backgroundColor = widget.style.regularDayColor.withValues(alpha: 0.9);
+      backgroundColor = widget.style.regularDayColor;
       textColor = widget.style.regularDayTextColor;
+      gradient = widget.style.regularDayGradient;
+      boxShadow = widget.style.dayBoxShadow;
+      elevation = widget.style.regularDayElevation;
       content = widget.config.showDayNumbers
           ? Text(
               day.day.toString(),
@@ -577,26 +599,41 @@ class _TontineCalendarState extends State<TontineCalendar> {
     }
 
     BoxDecoration decoration = BoxDecoration(
-      color: backgroundColor,
+      color: gradient == null ? backgroundColor : null,
+      gradient: gradient,
       borderRadius: widget.style.dayBorderRadius,
+      boxShadow: boxShadow,
+      border: widget.config.highlightSelectedDays && (isSelected || isNextDay)
+          ? Border.all(
+              color: widget.style.selectedDayBorderColor,
+              width: widget.style.selectedDayBorderWidth,
+            )
+          : null,
     );
 
-    if (widget.config.highlightSelectedDays && (isSelected || isNextDay)) {
-      decoration = decoration.copyWith(
-        border: Border.all(
-          color: widget.style.selectedDayBorderColor,
-          width: widget.style.selectedDayBorderWidth,
-        ),
+    Widget container = Container(
+      decoration: decoration,
+      padding: widget.style.dayPadding,
+      child: Center(child: content),
+    );
+
+    // Apply elevation if enabled
+    if (widget.style.enableElevation && elevation > 0) {
+      container = Material(
+        elevation: elevation,
+        borderRadius: widget.style.dayBorderRadius,
+        color: Colors.transparent,
+        child: container,
       );
     }
 
-    return InkWell(
-      onTap: () => _onDayTapped(day.day),
-      borderRadius: widget.style.dayBorderRadius,
-      child: Container(
-        decoration: decoration,
-        padding: widget.style.dayPadding,
-        child: Center(child: content),
+    return AnimatedContainer(
+      duration: widget.style.selectionAnimationDuration,
+      curve: widget.style.selectionAnimationCurve,
+      child: InkWell(
+        onTap: () => _onDayTapped(day.day),
+        borderRadius: widget.style.dayBorderRadius,
+        child: container,
       ),
     );
   }

@@ -64,6 +64,50 @@ class TontineCalendarStyle {
   
   /// Padding around day containers
   final EdgeInsets dayPadding;
+  
+  // New properties for v1.2.0
+  
+  /// Gradient for regular days (optional, if null uses regularDayColor)
+  final Gradient? regularDayGradient;
+  
+  /// Gradient for validated days (optional, if null uses validatedDayColor)
+  final Gradient? validatedDayGradient;
+  
+  /// Gradient for selected days (optional, if null uses selectedDayColor)
+  final Gradient? selectedDayGradient;
+  
+  /// Box shadow for day containers
+  final List<BoxShadow>? dayBoxShadow;
+  
+  /// Box shadow for validated days
+  final List<BoxShadow>? validatedDayBoxShadow;
+  
+  /// Box shadow for selected days
+  final List<BoxShadow>? selectedDayBoxShadow;
+  
+  /// Duration for page transitions between months
+  final Duration transitionDuration;
+  
+  /// Curve for page transitions
+  final Curve transitionCurve;
+  
+  /// Duration for day selection animations
+  final Duration selectionAnimationDuration;
+  
+  /// Curve for selection animations
+  final Curve selectionAnimationCurve;
+  
+  /// Whether to enable elevation effects
+  final bool enableElevation;
+  
+  /// Elevation for regular days
+  final double regularDayElevation;
+  
+  /// Elevation for validated days
+  final double validatedDayElevation;
+  
+  /// Elevation for selected days
+  final double selectedDayElevation;
 
   const TontineCalendarStyle({
     this.regularDayColor = const Color(0xff273071),
@@ -93,6 +137,21 @@ class TontineCalendarStyle {
     this.dayHeight = 50.0,
     this.calendarPadding = const EdgeInsets.all(8.0),
     this.dayPadding = EdgeInsets.zero,
+    // New properties with defaults
+    this.regularDayGradient,
+    this.validatedDayGradient,
+    this.selectedDayGradient,
+    this.dayBoxShadow,
+    this.validatedDayBoxShadow,
+    this.selectedDayBoxShadow,
+    this.transitionDuration = const Duration(milliseconds: 300),
+    this.transitionCurve = Curves.easeInOut,
+    this.selectionAnimationDuration = const Duration(milliseconds: 200),
+    this.selectionAnimationCurve = Curves.easeOut,
+    this.enableElevation = false,
+    this.regularDayElevation = 0.0,
+    this.validatedDayElevation = 2.0,
+    this.selectedDayElevation = 4.0,
   });
 
   /// Creates a default style
@@ -189,6 +248,20 @@ class TontineCalendarStyle {
     double? dayHeight,
     EdgeInsets? calendarPadding,
     EdgeInsets? dayPadding,
+    Gradient? regularDayGradient,
+    Gradient? validatedDayGradient,
+    Gradient? selectedDayGradient,
+    List<BoxShadow>? dayBoxShadow,
+    List<BoxShadow>? validatedDayBoxShadow,
+    List<BoxShadow>? selectedDayBoxShadow,
+    Duration? transitionDuration,
+    Curve? transitionCurve,
+    Duration? selectionAnimationDuration,
+    Curve? selectionAnimationCurve,
+    bool? enableElevation,
+    double? regularDayElevation,
+    double? validatedDayElevation,
+    double? selectedDayElevation,
   }) {
     return TontineCalendarStyle(
       regularDayColor: regularDayColor ?? this.regularDayColor,
@@ -212,6 +285,20 @@ class TontineCalendarStyle {
       dayHeight: dayHeight ?? this.dayHeight,
       calendarPadding: calendarPadding ?? this.calendarPadding,
       dayPadding: dayPadding ?? this.dayPadding,
+      regularDayGradient: regularDayGradient ?? this.regularDayGradient,
+      validatedDayGradient: validatedDayGradient ?? this.validatedDayGradient,
+      selectedDayGradient: selectedDayGradient ?? this.selectedDayGradient,
+      dayBoxShadow: dayBoxShadow ?? this.dayBoxShadow,
+      validatedDayBoxShadow: validatedDayBoxShadow ?? this.validatedDayBoxShadow,
+      selectedDayBoxShadow: selectedDayBoxShadow ?? this.selectedDayBoxShadow,
+      transitionDuration: transitionDuration ?? this.transitionDuration,
+      transitionCurve: transitionCurve ?? this.transitionCurve,
+      selectionAnimationDuration: selectionAnimationDuration ?? this.selectionAnimationDuration,
+      selectionAnimationCurve: selectionAnimationCurve ?? this.selectionAnimationCurve,
+      enableElevation: enableElevation ?? this.enableElevation,
+      regularDayElevation: regularDayElevation ?? this.regularDayElevation,
+      validatedDayElevation: validatedDayElevation ?? this.validatedDayElevation,
+      selectedDayElevation: selectedDayElevation ?? this.selectedDayElevation,
     );
   }
 
@@ -239,7 +326,15 @@ class TontineCalendarStyle {
         other.gridSpacing == gridSpacing &&
         other.dayHeight == dayHeight &&
         other.calendarPadding == calendarPadding &&
-        other.dayPadding == dayPadding;
+        other.dayPadding == dayPadding &&
+        other.transitionDuration == transitionDuration &&
+        other.transitionCurve == transitionCurve &&
+        other.selectionAnimationDuration == selectionAnimationDuration &&
+        other.selectionAnimationCurve == selectionAnimationCurve &&
+        other.enableElevation == enableElevation &&
+        other.regularDayElevation == regularDayElevation &&
+        other.validatedDayElevation == validatedDayElevation &&
+        other.selectedDayElevation == selectedDayElevation;
   }
 
   @override
@@ -266,6 +361,14 @@ class TontineCalendarStyle {
       dayHeight,
       calendarPadding,
       dayPadding,
+      transitionDuration,
+      transitionCurve,
+      selectionAnimationDuration,
+      selectionAnimationCurve,
+      enableElevation,
+      regularDayElevation,
+      validatedDayElevation,
+      selectedDayElevation,
     ]);
   }
 

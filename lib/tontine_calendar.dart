@@ -8,3 +8,5 @@ export 'src/models/tontine_calendar_style.dart';
 export 'src/widgets/tontine_calendar.dart';
 export 'src/utils/tontine_calendar_utils.dart';
 export 'src/utils/tontine_calendar_theme.dart';
+export 'src/utils/tontine_export_utils.dart';
+export 'src/themes/material3_themes.dart';

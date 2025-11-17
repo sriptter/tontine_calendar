@@ -12,6 +12,9 @@ class TontineCalendarConfig {
   /// Custom month names (optional, defaults to English month names)
   final List<String>? monthNames;
 
+  /// Locale for month names (e.g., 'en', 'fr', 'es'). Uses Intl package if provided.
+  final String? locale;
+
   /// Default amount per day (optional)
   final double? defaultDayAmount;
 
@@ -46,6 +49,7 @@ class TontineCalendarConfig {
     this.monthCount = 12,
     this.daysPerMonth = 31,
     this.monthNames,
+    this.locale,
     this.defaultDayAmount,
     this.validatedDays,
     this.enableNavigation = true,
@@ -89,6 +93,42 @@ class TontineCalendarConfig {
       monthCount: monthCount,
       daysPerMonth: daysPerMonth,
       monthNames: TontineMonth.frenchMonthNames,
+      locale: 'fr',
+      defaultDayAmount: defaultDayAmount,
+      validatedDays: validatedDays,
+    );
+  }
+
+  /// Creates a configuration with Spanish month names
+  factory TontineCalendarConfig.withSpanishNames({
+    int monthCount = 12,
+    int daysPerMonth = 31,
+    double? defaultDayAmount,
+    List<TontineDay>? validatedDays,
+  }) {
+    return TontineCalendarConfig(
+      monthCount: monthCount,
+      daysPerMonth: daysPerMonth,
+      monthNames: TontineMonth.spanishMonthNames,
+      locale: 'es',
+      defaultDayAmount: defaultDayAmount,
+      validatedDays: validatedDays,
+    );
+  }
+
+  /// Creates a configuration with locale-based month names using Intl
+  factory TontineCalendarConfig.withLocale({
+    required String locale,
+    int monthCount = 12,
+    int daysPerMonth = 31,
+    double? defaultDayAmount,
+    List<TontineDay>? validatedDays,
+  }) {
+    return TontineCalendarConfig(
+      monthCount: monthCount,
+      daysPerMonth: daysPerMonth,
+      locale: locale,
+      monthNames: TontineMonth.getMonthNamesForLocale(locale),
       defaultDayAmount: defaultDayAmount,
       validatedDays: validatedDays,
     );
@@ -129,7 +169,11 @@ class TontineCalendarConfig {
 
   /// Gets the effective month names to use
   List<String> get effectiveMonthNames {
-    return monthNames ?? TontineMonth.defaultMonthNames;
+    if (monthNames != null) return monthNames!;
+    if (locale != null) {
+      return TontineMonth.getMonthNamesForLocale(locale!);
+    }
+    return TontineMonth.defaultMonthNames;
   }
 
   /// Gets the total number of days across all months
@@ -168,6 +212,7 @@ class TontineCalendarConfig {
     int? monthCount,
     int? daysPerMonth,
     List<String>? monthNames,
+    String? locale,
     double? defaultDayAmount,
     List<TontineDay>? validatedDays,
     bool? enableNavigation,
@@ -183,6 +228,7 @@ class TontineCalendarConfig {
       monthCount: monthCount ?? this.monthCount,
       daysPerMonth: daysPerMonth ?? this.daysPerMonth,
       monthNames: monthNames ?? this.monthNames,
+      locale: locale ?? this.locale,
       defaultDayAmount: defaultDayAmount ?? this.defaultDayAmount,
       validatedDays: validatedDays ?? this.validatedDays,
       enableNavigation: enableNavigation ?? this.enableNavigation,
